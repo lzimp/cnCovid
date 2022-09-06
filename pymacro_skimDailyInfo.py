@@ -1,77 +1,23 @@
 
 
-import requests, random, re
+import os, requests, random, re
+import pandas as pd
 import urllib.request
 import numpy as np
 import time
 from bs4 import BeautifulSoup
 from datetime import datetime as dt
+from csv import DictWriter
 
+def skimDayData(fl="nhcRaw2022/7月19日.txt"):
 
-def loadCovidList():
-    user_agents = ["Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0",
-            "Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101 Firefox/78.0",
-            "Mozilla/5.0 (X11; Linux x86_64; rv:95.0) Gecko/20100101 Firefox/95.0"]
-    random_user_agent = random.choice(user_agents)
-    headers = {'User-Agent': random_user_agent}
-    url = 'http://www.nhc.gov.cn/yjb/s7860/new_list.shtml'
-    #response = requests.get(url, headers=headers)
-    #print(response)
-    #soup = BeautifulSoup(response.text, features="lxml")
-    #print(soup)
-    #data = soup.find_all("li")
-    #print(len(data), data)
+    rawfile = open(fl, "r")
+    rflinfo = rawfile.read()
+    dayinfo = rflinfo.split("\n")
+    rawfile.close()
 
-    listName = "daily_covid19_list.txt"
-    #cvfile = open(listName, "r")
-    #cvlist = cvfile.read()#.split("\n")
-    #print(cvlist, len(cvlist))
-    with open(listName) as fl:
-        lines = fl.read().splitlines()
-
-    #print(lines)
-    url = "http://www.nhc.gov.cn/"
-
-    cvlist = []
-    for line in lines:
-        cvlist.append(url+line)
-
-    #print(cvlist, len(cvlist))
-
-    return cvlist
-
-def loadCovidData():
-
-    user_agents = ["Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0",
-            "Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101 Firefox/78.0",
-            "Mozilla/5.0 (X11; Linux x86_64; rv:95.0) Gecko/20100101 Firefox/95.0"]
-    random_user_agent = random.choice(user_agents)
-    headers = {'User-Agent': random_user_agent}
-    #print(headers)
-    #url = 'http://www.nhc.gov.cn/yjb/s7860/202208/7bcb5ceeefe540ebb9289c37cc0afc41.shtml'
-    #url = 'http://www.nhc.gov.cn/yjb/s7860/202208/e12653e6071944c4b5da52b7bd552f20.shtml' 
-    #url = 'http://www.nhc.gov.cn/yjb/s7860/202208/8fbbe614bd0c4a5ca9cf8a9e4c289e9a.shtml'
-
-    cvlist = loadCovidList()
-
-    url = cvlist[-1]
-    print(url)
-    response = requests.get(url, headers=headers)
-    soup = BeautifulSoup(response.text, features="lxml")
-    print(soup)
-
-    # get all the paragraphes in the page 
-    data = soup.find_all("p")
-    #print(data)
-    print(len(data))
-
-    for ip in range(7):
-        print("第 %d 段内容： "%(ip+1), data[ip].get_text())
-
-def skimData():
-
-    rawdata = "9月3日0-24时，31个省（自治区、直辖市）和新疆生产建设兵团报告新增确诊病例384例。其中境外输入病例70例（广东18例，福建12例，上海9例，北京6例，内蒙古4例，黑龙江4例，四川4例，陕西4例，天津3例，河南2例，云南2例，辽宁1例，山东1例），含6例由无症状感染者转为确诊病例（四川2例，陕西2例，山东1例，广东1例）；本土病例314例（四川98例，广东79例，西藏51例，海南24例，辽宁11例，吉林11例，内蒙古10例，青海8例，黑龙江4例，天津3例，贵州3例，河北2例，浙江2例，江西2例，北京1例，上海1例，山东1例，湖南1例，重庆1例，陕西1例），含40例由无症状感染者转为确诊病例（海南16例，四川7例，西藏6例，吉林4例，青海4例，北京1例，黑龙江1例，浙江1例）。无新增死亡病例。无新增疑似病例。"
-
+    rawdata = dayinfo[0]
+    
     lclProv = []
     rawsplt = re.split('。|；', rawdata)
     for s in rawsplt:
@@ -80,7 +26,7 @@ def skimData():
         else:
             pass
 
-
+    #print(lclProv)
     prvList = []
     prvsplt = re.split('（|），', lclProv[0])
     for lcl in prvsplt:
@@ -91,7 +37,7 @@ def skimData():
     # 0: 全国总日增本土病例，    
     #print(prvList)
     ttlCase = int(re.sub(u"([^\u0030-\u0039])", "", prvList[0]))
-    print(ttlCase, type(ttlCase))
+    #print(ttlCase, type(ttlCase))
 
     # 1: 本土分省日增病例，
     prvName, prvCase = [], []
@@ -101,7 +47,7 @@ def skimData():
         prvName.append(prvnm[0:-1])
         prvCase.append(int(re.sub(u"([^\u0030-\u0039])", "", prv)))
 
-    print(prvName, prvCase)
+    #print(prvName, prvCase)
 
     # 2: 全国无症状转确诊病例数，3: 分省信息
     ttlAtcf = int(re.sub(u"([^\u0030-\u0039])", "", prvList[2]))
@@ -112,13 +58,13 @@ def skimData():
         atcName.append(atcnm[0:-1])
         atcCase.append(int(re.sub(u"([^\u0030-\u0039])", "", prv)))
 
-    print(atcName, atcCase)
+    #print(atcName, atcCase)
 
-    rawAsym = "31个省（自治区、直辖市）和新疆生产建设兵团报告新增无症状感染者1464例，其中境外输入105例，本土1359例（西藏505例，青海131例，辽宁113例，黑龙江93例，四川88例，吉林81例，山东78例，江西55例，新疆33例，广东24例，海南21例，天津19例，广西18例，河南17例，湖北16例，甘肃16例，河北15例，贵州12例，内蒙古10例，陕西8例，浙江3例，湖南2例，重庆1例）。"
+    rawAsym = dayinfo[4]
 
     asysplt = re.split("（", rawAsym)
     ttlAsym = int(re.sub(u"([^\u0030-\u0039])", "", re.split("，", asysplt[1])[-1]))
-    print(ttlAsym)
+    #print(ttlAsym)
 
     asyName, asyCase = [], []
     asyProv = re.split('，', asysplt[2])
@@ -127,13 +73,90 @@ def skimData():
         asyName.append(asynm[0:-1])
         asyCase.append(int(re.sub(u"([^\u0030-\u0039])", "", asy)))
 
-    print(asyName, asyCase)
+    #print(asyName, asyCase)
+
+    return prvName, prvCase, atcName, atcCase, asyName, asyCase
+
+def dayDataSave(fl = "nhcRaw2022/7月19日.txt"):
+
+    prvInfo = pd.read_csv("prvList.txt", sep="\s+", header=None)
+    prvIndx = pd.Index(prvInfo[0])
+    #print(prvInfo[0])
+
+    #fl = "nhcRaw2022/7月19日.txt"
+    prvName, prvCase, atcName, atcCase, asyName, asyCase = skimDayData(fl)
+    #print(prvName, prvCase, atcName, atcCase, asyName, asyCase)
+
+    date = re.split('月', fl[11:-5])
+    #tday = dt.strptime('22-' + date[0].zfill(2)+ '-' + date[1].zfill(2), '%y-%m-%d').date()
+    tday = dt.strptime('22-%s-%s'%(date[0], date[1]), '%y-%m-%d').date()
+    #print(type(tday))
+ 
+    ipos = 0
+    for prv in list(set(prvName + atcName + asyName)):
+
+        if prv in prvName:
+            prvpos = prvCase[prvName.index(prv)]
+        else:
+            prvpos = 0
+
+        if prv in asyName:
+            prvasy = asyCase[asyName.index(prv)]
+        else:
+            prvasy = 0
+
+        if prv in atcName:
+            prvatc = atcCase[atcName.index(prv)]
+        else:
+            prvatc = 0
+        #print(prv, prvpos, prvasy, prvatp)
+
+        prvidx = prvIndx.get_loc(prv)
+        flhead = prvInfo[1][prvidx]
+        #print(prv, prvidx, flhead, type(flhead))
+        svFile = "nhcDat2022/covid19_" + flhead + ".csv"
+        if os.path.exists(svFile):
+            df = pd.read_csv(svFile)
+            #print(df, type(df))
+            ltdate = df["date"].iloc[len(df.index)-1]
+            #print(ltdate, type(ltdate))
+            if ltdate == str(tday):
+                print("the data is latest already!")
+            else:
+                print("write the data from today!")
+                fields = ['date', 'con', 'asy', 'atc']
+                dict = {'date':tday, 'con':prvpos, 'asy':prvasy, 'atc':prvatc}
+                with open(svFile, 'a') as flobject:
+                    dctobject = DictWriter(flobject, fieldnames = fields)
+                    dctobject.writerow(dict)
+
+                    flobject.close()
+
+        else:
+            dtHeader = {'date':[tday], 'con':[prvpos], 'asy':[prvasy], 'atc':[prvatc]}
+            prvData = pd.DataFrame(dtHeader)
+            #prvData[0] = [prvpos, prvasy, prvatp]
+
+            print(prvData)
+
+            #prvData.to_pickle(svFile)
+            prvData.to_csv(svFile, index=False)
 
 
 def main():
 
-    #skimData()
-    loadCovidData()
+    flList = os.listdir('nhcRaw2022/')
+    flList.sort(key=lambda x:str(x.split('.')[0]))
+    ##print(flList)
+    #for fn in flList:
+    #    fl = "nhcRaw2022/" + fn
+    #    print(fl)
+    #    dayDataSave(fl)
+
+    #fl = "nhcRaw2022/8月12日.txt"
+    fl = "nhcRaw2022/" + flList[-1]
+    dayDataSave(fl)
+    #loadCovidData()
     #loadCovidList()
 
 if __name__ == '__main__':

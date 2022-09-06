@@ -34,7 +34,7 @@ def fetchUrl(url):
 
 def getPageUrl():
 
-    for page in range(1, 2):
+    for page in range(1, 3):
         if page == 1:
             yield 'http://www.nhc.gov.cn/yjb/s7860/new_list.shtml'
         else:
@@ -58,6 +58,8 @@ def getContent(html):
     s = []
     if cnt:
         for item in cnt:
+            if item.text == "":
+                continue
             s.append(item.text)
         return s
 
@@ -74,7 +76,8 @@ def saveData(path, flname, content):
 
 def main():
 
-    path = "/data/jobs/csLearn/lzCovid19/stsData2022/"
+    #path = "/data/jobs/csLearn/lzCovid19/stsData2022/"
+    path = "nhcRaw2022/"
     tdate = dt.date.today() #+ dt.timedelta(days=-1)
     print(tdate)
 
@@ -83,6 +86,7 @@ def main():
 
         for title, link, date in getTitleUrl(s):
             print(title, link, date)
+           
             #mon = int(date.split("-")[1])
             #day = int(date.split("-")[2])
             #if mon <= 6 and day < 1:
@@ -96,6 +100,18 @@ def main():
             print(content)
 
             flname = title[2:-17]
+            #print(flname)
+            if flname[1] == "月":
+                mon = flname[0].zfill(2) + flname[1]
+            else:
+                mon = flname[0:3]
+
+            if flname[-3] == "月":
+                day = flname[-2].zfill(2) + flname[-1]
+            else:
+                day = flname[-3:]
+
+            flname = mon + day
             saveData(path, flname, content)
             print("--------"*20)
 
