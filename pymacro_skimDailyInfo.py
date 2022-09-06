@@ -61,14 +61,17 @@ def skimDayData(fl="nhcRaw2022/7月19日.txt"):
     #print(atcName, atcCase)
 
     rawAsym = dayinfo[4]
+    #print(rawAsym)
 
     asysplt = re.split("（", rawAsym)
     ttlAsym = int(re.sub(u"([^\u0030-\u0039])", "", re.split("，", asysplt[1])[-1]))
-    #print(ttlAsym)
+
+    #print(asysplt, ttlAsym)
 
     asyName, asyCase = [], []
     asyProv = re.split('，', asysplt[2])
-    for asy in cassplt:
+    #print(asyProv)
+    for asy in asyProv:
         asynm = re.sub(u"([^\u4e00-\u9fa5])", "", asy)
         asyName.append(asynm[0:-1])
         asyCase.append(int(re.sub(u"([^\u0030-\u0039])", "", asy)))
@@ -153,7 +156,7 @@ def main():
     #    print(fl)
     #    dayDataSave(fl)
 
-    #fl = "nhcRaw2022/8月12日.txt"
+    #fl = "nhcRaw2022/08月20日.txt"
     fl = "nhcRaw2022/" + flList[-1]
     dayDataSave(fl)
     #loadCovidData()
