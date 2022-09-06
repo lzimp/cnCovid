@@ -34,7 +34,7 @@ def fetchUrl(url):
 
 def getPageUrl():
 
-    for page in range(1, 3):
+    for page in range(1, 2):
         if page == 1:
             yield 'http://www.nhc.gov.cn/yjb/s7860/new_list.shtml'
         else:

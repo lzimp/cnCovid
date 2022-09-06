@@ -22,65 +22,56 @@ class covidData(object):
 
     def loadData(self):
         #self.covidData = pd.read_excel(self.file, engine='openpyxl')
-        self.covidData = pd.read_csv(self.file)
+        prvdata = pd.read_csv(self.file)
+        #print(prvdata)
+        fday = dt.datetime.strptime('%s'%(prvdata["date"][0]), '%Y-%m-%d').date()
+        dtot = len(prvdata["date"])
+        lday = dt.datetime.strptime('%s'%(prvdata["date"][dtot-1]), '%Y-%m-%d').date()
 
+        dayd = (lday - fday).days + 1
+        prvdata['date'] = pd.to_datetime(prvdata['date'], format='%Y-%m-%d')
 
-def hnDataStats(hnfile, pname):
+        
+        r = pd.date_range(start=prvdata.date.min(), end=prvdata.date.max())
+        prvdata = prvdata.set_index('date').reindex(r).fillna(0).rename_axis('date').reset_index()
+        #print(prvdata)
+
+        self.covidData = prvdata
+
+def prvDataStats(prvfile, pname):
     #if pname == "hana":
     #    pnm = "HN"
     #elif pname == "sich":
     #    pnm = "SC"
 
 
-    hnCovid = covidData(hnfile)
-    hnCovid.loadData()
-    cvDat = hnCovid.covidData
-    tsdate = []
-    for date in cvDat['date']:
-        test = dt.datetime.strptime('%s'%(date), '%Y-%m-%d').date()
-        #print(test)
-        tsdate.append(test)
+    prvCovid = covidData(prvfile)
+    prvCovid.loadData()
+    cvDat = prvCovid.covidData
+    tsdate = cvDat['date']
+    #for date in cvDat['date']:
+    #    test = dt.datetime.strptime('%s'%(date), '%Y-%m-%d').date()
+    #    #print(test)
+    #    tsdate.append(test)
 
     #print(tsdate[0], type(tsdate[0]))
 
     cvDat['pos'] = cvDat['con'] + cvDat['asy'] - cvDat['atc']
-    hnpstv = cvDat['pos']
+    prvpstv = cvDat['pos']
     cvDat['tot'] = cvDat['pos'].cumsum()
-    hnrTot = cvDat['tot']
-    hnravg = cvDat['pos'].rolling(window=7).mean()
+    prvrTot = cvDat['tot']
+    prvravg = cvDat['pos'].rolling(window=7).mean()
 
     #print(lzravg, cgravg)
-    print(cvDat)
-
-#    pmdl = SARIMAX(hnpstv, order=(1, 1, 1), seasonal_order=(0, 0, 0, 0))
-#    fmdl = pmdl.fit(disp=False)
-#    ndays = len(hnpstv)
-#    fdate, fcase = [], []
-#    fdt = tsdate[ndays-1]
-#    for fday in range(ndays, ndays+10):
-#        case = fmdl.predict(fday, fday)
-#        fdt = fdt + dt.timedelta(days=1)
-#        fdate.append(fdt)
-#        for cs in case.tolist():
-#            #print(cs)
-#            fcase.append(cs)
-#
-#    #=====================================================
-#    # creat and train forecaster
-#    regressor = RandomForestRegressor(random_state=123, max_depth=3, n_estimators=20)
-#    forecaster = ForecasterAutoreg(regressor=regressor, lags=5)
-#    forecaster.fit(y=hnpstv)
-#    #print(forecaster)
-#    preCases = forecaster.predict(steps=10)
-#    #print(preCases)
+    #print(cvDat)
 
     fig, axs = plt.subplots(1, 1, constrained_layout=True)
     tday = str(dt.date.today())
     axs.text(0.75, 0.95, 'by @lzimp (%s)'%(tday), transform=axs.transAxes, fontsize=8, color='gray', 
             alpha=0.25, ha='center', va='center', rotation='0')
 
-    axs.bar(tsdate, hnpstv, alpha=0.75, label='%s daily pos'%(pname))
-    axs.plot(tsdate, hnravg, '-or', label='%s 7days avg'%(pname))
+    axs.bar(tsdate, prvpstv, alpha=0.75, label='%s daily pos'%(pname))
+    axs.plot(tsdate, prvravg, '-or', label='%s 7days avg'%(pname))
     #axs.plot(fdate, fcase, '--gd', label='simple prediction')
     #axs.plot(fdate, preCases, '--gd', label='simple prediction')
 
@@ -90,19 +81,23 @@ def hnDataStats(hnfile, pname):
 
     ax2 = axs.twinx()
     ax2.set_ylabel("Number of Total Cases", color='c', fontsize=16, horizontalalignment='right', y=1.0)
-    ax2.plot(tsdate, hnrTot, '--c', label='%s total (TD)'%(pname))
+    ax2.plot(tsdate, prvrTot, '--c', label='%s total (TD)'%(pname))
 
-    axs.legend(loc='upper left', facecolor='whitesmoke', edgecolor='black', fontsize=10)
-    ax2.legend(loc='center left', facecolor='whitesmoke', edgecolor='black', fontsize=10)
+    #axs.legend(loc='upper left', facecolor='whitesmoke', edgecolor='black', fontsize=10)
+    lns1, lbs1 = axs.get_legend_handles_labels()
+    lns2, lbs2 = ax2.get_legend_handles_labels()
+
     plt.grid(axis='x', which='major', linestyle='--')
     plt.grid(axis='y', which='major', linestyle='--')
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m-%d'))
     plt.gca().xaxis.set_major_locator(mdates.DayLocator())
     plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=5))
 
+    axs.legend(lns1+lns2, lbs1+lbs2, loc='best', facecolor='whitesmoke', edgecolor='black', fontsize=10)
+    #fig.legend(loc='best', facecolor='whitesmoke', edgecolor='black', fontsize=10)
     #plt.show()
     plt.savefig("nhcRes2022/%s_pstvStats2207.png"%(pname), dpi=200)
-
+    plt.close()
 
 def main():
 
@@ -116,12 +111,12 @@ def main():
     for fl in flList:
         name = fl[8:12]
         plist.append(name)
-    #plist = ["hana", "sich"]
+#    plist = ["hana", "sich"]
     
     for pname in plist:
-        hnfile = "nhcDat2022/covid19_%s.csv"%(pname)
-        print(hnfile)
-        hnDataStats(hnfile, pname)
+        prvfile = "nhcDat2022/covid19_%s.csv"%(pname)
+        print(prvfile)
+        prvDataStats(prvfile, pname)
 
 if __name__ == '__main__':
 
