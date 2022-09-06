@@ -15,23 +15,19 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 #==============================================================
+plt.rcParams["font.sans-serif"]=["FangSong"] #设置字体
+plt.rcParams["axes.unicode_minus"]=False #该语句解决图像中的“-”负号的乱码问题
 
 class covidData(object):
     def __init__(self, dtfile):
         self.file = dtfile
 
     def loadData(self):
-        #self.covidData = pd.read_excel(self.file, engine='openpyxl')
         prvdata = pd.read_csv(self.file)
-        #print(prvdata)
-        fday = dt.datetime.strptime('%s'%(prvdata["date"][0]), '%Y-%m-%d').date()
-        dtot = len(prvdata["date"])
-        lday = dt.datetime.strptime('%s'%(prvdata["date"][dtot-1]), '%Y-%m-%d').date()
-
-        dayd = (lday - fday).days + 1
+        # convert the string of date into datetime format
         prvdata['date'] = pd.to_datetime(prvdata['date'], format='%Y-%m-%d')
 
-        
+        # insert the missing date into the data, and the number of cases is zero!
         r = pd.date_range(start=prvdata.date.min(), end=prvdata.date.max())
         prvdata = prvdata.set_index('date').reindex(r).fillna(0).rename_axis('date').reset_index()
         #print(prvdata)
@@ -39,30 +35,25 @@ class covidData(object):
         self.covidData = prvdata
 
 def prvDataStats(prvfile, pname):
-    #if pname == "hana":
-    #    pnm = "HN"
-    #elif pname == "sich":
-    #    pnm = "SC"
 
+    # consider to use the Chinese characters or full Name in the legend
+    prvInfo = pd.read_csv("prvList.txt", sep="\s+", header=None)
+    prvIndx = pd.Index(prvInfo[1])
+
+    prvidx = prvIndx.get_loc(pname)
+    prname = prvInfo[0][prvidx]
+    #print(pname, prname)
 
     prvCovid = covidData(prvfile)
     prvCovid.loadData()
     cvDat = prvCovid.covidData
     tsdate = cvDat['date']
-    #for date in cvDat['date']:
-    #    test = dt.datetime.strptime('%s'%(date), '%Y-%m-%d').date()
-    #    #print(test)
-    #    tsdate.append(test)
-
-    #print(tsdate[0], type(tsdate[0]))
 
     cvDat['pos'] = cvDat['con'] + cvDat['asy'] - cvDat['atc']
     prvpstv = cvDat['pos']
     cvDat['tot'] = cvDat['pos'].cumsum()
     prvrTot = cvDat['tot']
     prvravg = cvDat['pos'].rolling(window=7).mean()
-
-    #print(lzravg, cgravg)
     #print(cvDat)
 
     fig, axs = plt.subplots(1, 1, constrained_layout=True)
@@ -70,10 +61,8 @@ def prvDataStats(prvfile, pname):
     axs.text(0.75, 0.95, 'by @lzimp (%s)'%(tday), transform=axs.transAxes, fontsize=8, color='gray', 
             alpha=0.25, ha='center', va='center', rotation='0')
 
-    axs.bar(tsdate, prvpstv, alpha=0.75, label='%s daily pos'%(pname))
-    axs.plot(tsdate, prvravg, '-or', label='%s 7days avg'%(pname))
-    #axs.plot(fdate, fcase, '--gd', label='simple prediction')
-    #axs.plot(fdate, preCases, '--gd', label='simple prediction')
+    axs.bar(tsdate, prvpstv, alpha=0.75, label='%s 日增阳性'%(prname))
+    axs.plot(tsdate, prvravg, '-or', ms=3, label='%s 七日平均'%(prname))
 
     axs.tick_params(axis='x', labelrotation=45)
     axs.set_xlabel("Date", fontsize=16, horizontalalignment='right', x=1.0)
@@ -81,7 +70,7 @@ def prvDataStats(prvfile, pname):
 
     ax2 = axs.twinx()
     ax2.set_ylabel("Number of Total Cases", color='c', fontsize=16, horizontalalignment='right', y=1.0)
-    ax2.plot(tsdate, prvrTot, '--c', label='%s total (TD)'%(pname))
+    ax2.plot(tsdate, prvrTot, '--c', label='%s 总阳性数'%(prname))
 
     #axs.legend(loc='upper left', facecolor='whitesmoke', edgecolor='black', fontsize=10)
     lns1, lbs1 = axs.get_legend_handles_labels()
@@ -94,7 +83,7 @@ def prvDataStats(prvfile, pname):
     plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=5))
 
     axs.legend(lns1+lns2, lbs1+lbs2, loc='best', facecolor='whitesmoke', edgecolor='black', fontsize=10)
-    #fig.legend(loc='best', facecolor='whitesmoke', edgecolor='black', fontsize=10)
+
     #plt.show()
     plt.savefig("nhcRes2022/%s_pstvStats2207.png"%(pname), dpi=200)
     plt.close()
