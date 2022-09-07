@@ -121,12 +121,16 @@ def dayDataSave(fl = "nhcRaw2022/7月19日.txt"):
         if os.path.exists(svFile):
             df = pd.read_csv(svFile)
             #print(df, type(df))
-            ltdate = df["date"].iloc[len(df.index)-1]
-            #print(ltdate, type(ltdate))
-            if ltdate == str(tday):
-                print("the data is latest already!")
+            # get the date of the last entry
+            #ltdate = df["date"].iloc[len(df.index)-1]
+            # get the list of the date for all entries
+            ltdate = [x for x in df.date]
+            #if ltdate == str(tday):
+            #    print("the data is latest already!")
+            if str(tday) in ltdate:
+                print("data from %s was recorded already"%(str(tday)))
             else:
-                print("write the data from today!")
+                print("write the data from %s!"%(str(tday)))
                 fields = ['date', 'con', 'asy', 'atc']
                 dict = {'date':tday, 'con':prvpos, 'asy':prvasy, 'atc':prvatc}
                 with open(svFile, 'a') as flobject:
