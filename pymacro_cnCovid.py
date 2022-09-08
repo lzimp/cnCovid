@@ -64,9 +64,10 @@ def prvDataStats(prvfile, pname):
     axs.bar(tsdate, prvpstv, alpha=0.75, label='%s 日增阳性'%(prname))
     axs.plot(tsdate, prvravg, '-or', ms=3, label='%s 七日平均'%(prname))
 
-    axs.tick_params(axis='x', labelrotation=45)
-    axs.set_xlabel("Date", fontsize=16, horizontalalignment='right', x=1.0)
-    axs.set_ylabel("Number of Daily Cases", fontsize=16, horizontalalignment='right', y=1.0)
+    #axs.tick_params(axis='x', labelrotation=45, labelright=True)
+    axs.set_xticklabels(axs.get_xticklabels(), rotation=30, va='top', ha='center') # center or right
+    axs.set_xlabel("Date", fontsize=16, ha='right', x=1.0)
+    axs.set_ylabel("Number of Daily Cases", fontsize=16, ha='right', y=1.0)
 
     ax2 = axs.twinx()
     ax2.set_ylabel("Number of Total Cases", color='c', fontsize=16, horizontalalignment='right', y=1.0)
