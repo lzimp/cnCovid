@@ -63,17 +63,19 @@ def getTitleUrl(html, nhctype):
     for item in titleList:
         if nhctype == "cn":
             link = "http://www.nhc.gov.cn" + item.a["href"]
+            date = item.span.text
+            title = item.a["title"]
         if nhctype == "sc":
             link = "http://wsjkw.sc.gov.cn" + item.a["href"]
+            date = item.span.text
 
-        date = item.span.text
-        print("the item is: ", item, date, type(item))
-        bttle = str(item).encode('utf-8')
-        bttle = etree.HTML(bttle.decode('utf-8'))
-        
-        title = bttle.xpath('//div/a[@target="_blank"]')
-        print("the title is: ", title)
-        #title = item.a["title"]
+            print("the item is: ", item, date, type(item))
+            bttle = str(item).encode('utf-8')
+            bttle = etree.HTML(bttle.decode('utf-8'))
+            
+            title = bttle.xpath('//div/a[@target="_blank"]')
+            print("the title is: ", title)
+            #title = item.a["title"]
         yield title, link, date
 
 def getContent(html):
