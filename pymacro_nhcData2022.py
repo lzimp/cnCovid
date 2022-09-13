@@ -15,6 +15,7 @@ from pyppeteer import launcher
 launcher.DEFAULT_ARGS.remove("--enable-automation")
 from pyppeteer import launch
 import datetime as dt
+from lxml import etree
 
 
 async def pyppteer_fetchUrl(url):
@@ -32,23 +33,47 @@ async def pyppteer_fetchUrl(url):
 def fetchUrl(url):
     return asyncio.get_event_loop().run_until_complete(pyppteer_fetchUrl(url))
 
-def getPageUrl():
+def getPageUrl(nhctype):
 
-    for page in range(1, 2):
-        if page == 1:
-            yield 'http://www.nhc.gov.cn/yjb/s7860/new_list.shtml'
-        else:
-            url = 'http://www.nhc.gov.cn/yjb/s7860/new_list_' + str(page) + '.shtml'
-            yield url
+    if nhctype == "cn":
+        for page in range(1, 2):
+            if page == 1:
+                yield 'http://www.nhc.gov.cn/yjb/s7860/new_list.shtml'
+            else:
+                url = 'http://www.nhc.gov.cn/yjb/s7860/new_list_' + str(page) + '.shtml'
+                yield url
 
-def getTitleUrl(html):
+    if nhctype == "sc":
+        for page in range(1, 2):
+            if page == 1:
+                yield 'http://wsjkw.sc.gov.cn/scwsjkw/gzbd01/ztwzlmgl.shtml'
+            else:
+                url = 'http://wsjkw.sc.gov.cn/scwsjkw/gzbd01/ztwzlmgl_' + str(page) + '.shtml'
+                yield url
+
+
+def getTitleUrl(html, nhctype):
 
     bsobj = BeautifulSoup(html, 'html.parser')
-    titleList = bsobj.find('div', attrs={"class": "list"}).ul.find_all("li")
+    if nhctype == "cn":
+        titleList = bsobj.find('div', attrs={"class": "list"}).ul.find_all("li")
+    if nhctype == "sc":
+        titleList = bsobj.find('div', attrs={"class": "wy_zt_ygzl"}).ul.find_all("li")
+
     for item in titleList:
-        link = "http://www.nhc.gov.cn" + item.a["href"]
-        title = item.a["title"]
+        if nhctype == "cn":
+            link = "http://www.nhc.gov.cn" + item.a["href"]
+        if nhctype == "sc":
+            link = "http://wsjkw.sc.gov.cn" + item.a["href"]
+
         date = item.span.text
+        print("the item is: ", item, date, type(item))
+        bttle = str(item).encode('utf-8')
+        bttle = etree.HTML(bttle.decode('utf-8'))
+        
+        title = bttle.xpath('//div/a[@target="_blank"]')
+        print("the title is: ", title)
+        #title = item.a["title"]
         yield title, link, date
 
 def getContent(html):
@@ -77,14 +102,18 @@ def saveData(path, flname, content):
 def main():
 
     #path = "/data/jobs/csLearn/lzCovid19/stsData2022/"
-    path = "nhcRaw2022/"
+    nhctype = "cn"
+    if nhctype == "cn":
+        path = "nhcRaw2022/"
+    if nhctype == "sc":
+        path = "shcRaq2022/"
     tdate = dt.date.today() #+ dt.timedelta(days=-1)
     print(tdate)
 
-    for url in getPageUrl():
+    for url in getPageUrl(nhctype):
         s = fetchUrl(url)
 
-        for title, link, date in getTitleUrl(s):
+        for title, link, date in getTitleUrl(s, nhctype):
             print(title, link, date)
            
             #mon = int(date.split("-")[1])
