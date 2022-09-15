@@ -80,6 +80,80 @@ def skimDayData(fl="nhcRaw2022/7月19日.txt"):
 
     return prvName, prvCase, atcName, atcCase, asyName, asyCase
 
+def skimSchData(fl="shcRaw2022/08月01日.txt"):
+
+    rawfile = open(fl, "r")
+    rflinfo = rawfile.read()
+    dayinfo = rflinfo.split("\n")
+    rawfile.close()
+
+    rawdata = dayinfo[0]
+    #print(rawdata)
+    
+    lclProv = []
+    rawsplt = re.split('，', rawdata)
+    #print(rawsplt)
+    for s in rawsplt:
+        if '新增本土' in s:
+            lclProv.append(s)
+        else:
+            pass
+
+    prvList = []
+    prvsplt = re.split('（|），', lclProv[0])
+    for lcl in prvsplt:
+        prvList.append(lcl)
+    
+    print(prvList)
+    # List for the context in the first paragraph: 每日新增确诊病例书、无症状转确诊病例数，
+    # 及其分省信息。
+    # 0: 全国总日增本土病例，    
+    #print(prvList)
+    ttlCase = int(re.sub(u"([^\u0030-\u0039])", "", prvList[0]))
+    #print(ttlCase, type(ttlCase))
+
+    # 1: 本土分省日增病例，
+    prvName, prvCase = [], []
+    cassplt = re.split('，', prvList[1])
+    for prv in cassplt:
+        prvnm = re.sub(u"([^\u4e00-\u9fa5])", "", prv)
+        prvName.append(prvnm[0:-1])
+        prvCase.append(int(re.sub(u"([^\u0030-\u0039])", "", prv)))
+
+    #print(prvName, prvCase)
+
+    # 2: 全国无症状转确诊病例数，3: 分省信息
+    ttlAtcf = int(re.sub(u"([^\u0030-\u0039])", "", prvList[2]))
+    atcName, atcCase = [], []
+    atcsplt = re.split('，', prvList[3])
+    for prv in atcsplt:
+        atcnm = re.sub(u"([^\u4e00-\u9fa5])", "", prv)
+        atcName.append(atcnm[0:-1])
+        atcCase.append(int(re.sub(u"([^\u0030-\u0039])", "", prv)))
+
+    #print(atcName, atcCase)
+
+    rawAsym = dayinfo[4]
+    #print(rawAsym)
+
+    asysplt = re.split("（", rawAsym)
+    ttlAsym = int(re.sub(u"([^\u0030-\u0039])", "", re.split("，", asysplt[1])[-1]))
+
+    #print(asysplt, ttlAsym)
+
+    asyName, asyCase = [], []
+    asyProv = re.split('，', asysplt[2])
+    #print(asyProv)
+    for asy in asyProv:
+        asynm = re.sub(u"([^\u4e00-\u9fa5])", "", asy)
+        asyName.append(asynm[0:-1])
+        asyCase.append(int(re.sub(u"([^\u0030-\u0039])", "", asy)))
+
+    #print(asyName, asyCase)
+
+    return prvName, prvCase, atcName, atcCase, asyName, asyCase
+
+
 def dayDataSave(fl = "nhcRaw2022/7月19日.txt"):
 
     prvInfo = pd.read_csv("prvList.txt", sep="\s+", header=None)
@@ -160,11 +234,11 @@ def main():
     #    print(fl)
     #    dayDataSave(fl)
 
-    #fl = "nhcRaw2022/08月20日.txt"
     fl = "nhcRaw2022/" + flList[-1]
     dayDataSave(fl)
-    #loadCovidData()
-    #loadCovidList()
+
+    #sfl = "shcRaw2022/08月01日.txt"
+    #skimSchData(sfl)
 
 if __name__ == '__main__':
     main()

@@ -108,7 +108,7 @@ def main():
     if nhctype == "cn":
         path = "nhcRaw2022/"
     if nhctype == "sc":
-        path = "shcRaq2022/"
+        path = "shcRaw2022/"
     tdate = dt.date.today() #+ dt.timedelta(days=-1)
     print(tdate)
 
