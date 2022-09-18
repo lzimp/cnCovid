@@ -102,10 +102,10 @@ def saveData(path, flname, content):
         str = '\n'
         fl.write(str.join(content))
 
-def main():
+def rawDatDown(nhctype):
 
     #path = "/data/jobs/csLearn/lzCovid19/stsData2022/"
-    nhctype = "sc"
+    #nhctype = "sc"
     if nhctype == "cn":
         path = "nhcRaw2022/"
     if nhctype == "sc":
@@ -121,7 +121,7 @@ def main():
            
             #mon = int(date.split("-")[1])
             #day = int(date.split("-")[2])
-            #if mon <= 6 and day < 1:
+            #if mon <= 9 and day < 15:
             #    break;
             if date != str(tdate):
                 print("The following information is not for today!")
@@ -150,6 +150,12 @@ def main():
 
             saveData(path, flname, content)
             print("--------"*20)
+
+def main():
+
+    tps = ['cn', 'sc']
+    for nhctype in tps:
+        rawDatDown(nhctype)
 
 if __name__ == '__main__':
 

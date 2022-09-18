@@ -87,8 +87,7 @@ def skimSchData(fl="shcRaw2022/08月01日.txt"):
     dayinfo = rflinfo.split("\n")
     rawfile.close()
 
-    rawdata = dayinfo[0]
-    #print(rawdata)
+    rawdata = dayinfo[0] + dayinfo[1]
     
     lclProv = []
     rawsplt = re.split('，', rawdata)
@@ -114,26 +113,31 @@ def skimSchData(fl="shcRaw2022/08月01日.txt"):
 
     # 1: 本土分省日增病例，
     prvName, prvCase = [], []
-    cassplt = re.split('，', prvList[1])
-    for prv in cassplt:
-        prvnm = re.sub(u"([^\u4e00-\u9fa5])", "", prv)
-        prvName.append(prvnm[0:-1])
-        prvCase.append(int(re.sub(u"([^\u0030-\u0039])", "", prv)))
+    if len(prvList) == 2:
+        prvnm = prvList[1]
+        prvName.append(prvnm[1:-1])
+        prvCase.append(ttlCase)
+    elif len(prvList) > 2:
+        cassplt = re.split('，', prvList[1])
+        for prv in cassplt:
+            prvnm = re.sub(u"([^\u4e00-\u9fa5])", "", prv)
+            prvName.append(prvnm[0:-1])
+            prvCase.append(int(re.sub(u"([^\u0030-\u0039])", "", prv)))
 
-    #print(prvName, prvCase)
+    print(prvName, prvCase)
 
-    # 2: 全国无症状转确诊病例数，3: 分省信息
-    ttlAtcf = int(re.sub(u"([^\u0030-\u0039])", "", prvList[2]))
-    atcName, atcCase = [], []
-    atcsplt = re.split('，', prvList[3])
-    for prv in atcsplt:
-        atcnm = re.sub(u"([^\u4e00-\u9fa5])", "", prv)
-        atcName.append(atcnm[0:-1])
-        atcCase.append(int(re.sub(u"([^\u0030-\u0039])", "", prv)))
+#    # 2: 全国无症状转确诊病例数，3: 分省信息
+#    ttlAtcf = int(re.sub(u"([^\u0030-\u0039])", "", prvList[2]))
+#    atcName, atcCase = [], []
+#    atcsplt = re.split('，', prvList[3])
+#    for prv in atcsplt:
+#        atcnm = re.sub(u"([^\u4e00-\u9fa5])", "", prv)
+#        atcName.append(atcnm[0:-1])
+#        atcCase.append(int(re.sub(u"([^\u0030-\u0039])", "", prv)))
+#
+#    #print(atcName, atcCase)
 
-    #print(atcName, atcCase)
-
-    rawAsym = dayinfo[4]
+    rawAsym = prvList[1]
     #print(rawAsym)
 
     asysplt = re.split("（", rawAsym)
@@ -237,7 +241,7 @@ def main():
     fl = "nhcRaw2022/" + flList[-1]
     dayDataSave(fl)
 
-    #sfl = "shcRaw2022/08月01日.txt"
+    #sfl = "shcRaw2022/08月19日.txt"
     #skimSchData(sfl)
 
 if __name__ == '__main__':
