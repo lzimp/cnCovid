@@ -55,6 +55,8 @@ def prvDataStats(prvfile, pname):
     prvrTot = cvDat['tot']
     prvravg = cvDat['pos'].rolling(window=7).mean()
     #print(cvDat)
+    conCase, asyCase = cvDat['con'], cvDat['asy']
+    atcCase = [-x for x in cvDat['atc']]
 
     fig, axs = plt.subplots(1, 1, constrained_layout=True)
     tday = str(dt.date.today())
@@ -63,6 +65,9 @@ def prvDataStats(prvfile, pname):
 
     axs.bar(tsdate, prvpstv, alpha=0.75, label='%s 日增阳性'%(prname))
     axs.plot(tsdate, prvravg, '-or', ms=3, label='%s 七日平均'%(prname))
+    axs.bar(tsdate, conCase, color='m', alpha=0.35, label='%s 日增确诊'%(prname))
+    axs.bar(tsdate, asyCase, color='g', alpha=0.35, label='%s 日增无症状'%(prname))
+    axs.bar(tsdate, atcCase, color='orange', alpha=0.35, label='%s 无症状转确诊'%(prname))
 
     #axs.tick_params(axis='x', labelrotation=45, labelright=True)
     axs.set_xticklabels(axs.get_xticklabels(), rotation=30, va='top', ha='center') # center or right
@@ -82,6 +87,9 @@ def prvDataStats(prvfile, pname):
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m-%d'))
     plt.gca().xaxis.set_major_locator(mdates.DayLocator())
     plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=5))
+    xmin, xmax = axs.get_xlim()
+    axs.plot([xmin, xmax], [0, 0], 'black')
+    axs.set_xlim(xmin, xmax)
 
     axs.legend(lns1+lns2, lbs1+lbs2, loc='best', facecolor='whitesmoke', edgecolor='black', fontsize=10)
 
