@@ -57,12 +57,14 @@ def prvDataStats(prvfile, pname):
     #print(cvDat)
     conCase, asyCase = cvDat['con'], cvDat['asy']
     atcCase = [-x for x in cvDat['atc']]
+    totAtc, totAsy = -sum(atcCase), sum(asyCase)
+    rateAtc = 100.*totAtc / totAsy
 
     fig, axs = plt.subplots(1, 1, constrained_layout=True)
     tday = str(dt.date.today())
-    axs.text(0.75, 0.95, 'by @lzimp (%s)'%(tday), transform=axs.transAxes, fontsize=8, color='gray', 
-            alpha=0.25, ha='center', va='center', rotation='0')
+    axs.text(0.75, 0.95, 'by @lzimp (%s)'%(tday), transform=axs.transAxes, fontsize=8, color='gray', alpha=0.25, ha='center', va='center', rotation='0')
 
+    axs.text(0.45, 0.95, '%.2f%%'%(rateAtc), transform=axs.transAxes, fontsize=12, color='red', alpha=0.75, ha='center', va='center', rotation='0')
     axs.bar(tsdate, prvpstv, alpha=0.75, label='%s 日增阳性'%(prname))
     axs.plot(tsdate, prvravg, '-or', ms=3, label='%s 七日平均'%(prname))
     axs.bar(tsdate, conCase, color='m', alpha=0.35, label='%s 日增确诊'%(prname))
