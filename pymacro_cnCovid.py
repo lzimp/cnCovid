@@ -99,7 +99,7 @@ def prvDataStats(prvfile, pname):
     plt.savefig("nhcRes2022/%s_pstvStats2207.png"%(pname), dpi=200)
     plt.close()
 
-    return prname, cvDat.con.iloc[-1], cvDat.asy.iloc[-1], cvDat.atc.iloc[-1], rateAtc
+    return prname, cvDat.con.iloc[-1], cvDat.asy.iloc[-1], cvDat.atc.iloc[-1], rateAtc, prvrTot.iloc[-1]
 
 def dailyInfo(dtInfo):
 
@@ -107,16 +107,26 @@ def dailyInfo(dtInfo):
     dtInfo = np.array(dtInfo)
     #print(dtInfo)
     rateAtc = [float(x) for x in dtInfo[:, 4]]
+    totCase = [float(x) for x in dtInfo[:, 5]]
 
     fig, axs = plt.subplots(1, 1, constrained_layout=True)
 
-    axs.plot(dtInfo[:, 0], rateAtc, 'or', alpha=0.75, label='总比率（自7月19日）')
+    axs.plot(dtInfo[:, 0], rateAtc, 'or', alpha=0.75, label='无症状转确诊（自7月19日）')
+    axs.text(0.75, 0.95, 'by @lzimp (%s)'%(tday), transform=axs.transAxes, fontsize=8, color='gray', alpha=0.25, ha='center', va='center', rotation='0')
+
+    ax2 = axs.twinx()
+    ax2.set_ylabel("累计总数", color='c', fontsize=16, horizontalalignment='right', y=1.0)
+    ax2.bar(dtInfo[:, 0], totCase, alpha=0.75, label='阳性总数（自7月19日）')
 
     #axs.set_xticklabels(axs.get_xticklabels(), rotation=30, va='top', ha='center')
     axs.tick_params(axis='x', which='major', labelrotation=75, labelright=True)
     axs.set_xlabel('')
-    axs.set_ylabel('无症状转确诊率（%）')
-    axs.legend(loc='best')
+    axs.set_ylabel('总比率（%）')
+
+    lns1, lbs1 = axs.get_legend_handles_labels()
+    lns2, lbs2 = ax2.get_legend_handles_labels()
+
+    axs.legend(lns1+lns2, lbs1+lbs2, loc='best', facecolor='whitesmoke', edgecolor='black', fontsize=10)
 
     plt.grid(axis='y', which='major', linestyle='--')
     #plt.show()
@@ -140,8 +150,8 @@ def main():
     for pname in plist:
         prvfile = "nhcDat2022/covid19_%s.csv"%(pname)
         print(prvfile)
-        prnm, con, asy, atc, rateAtc = prvDataStats(prvfile, pname)
-        dtInfo.append([prnm, con, asy, atc, rateAtc])
+        prnm, con, asy, atc, rateAtc, totCase = prvDataStats(prvfile, pname)
+        dtInfo.append([prnm, con, asy, atc, rateAtc, totCase])
 
     #print(dtInfo)
     dailyInfo(dtInfo)
