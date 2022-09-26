@@ -99,6 +99,29 @@ def prvDataStats(prvfile, pname):
     plt.savefig("nhcRes2022/%s_pstvStats2207.png"%(pname), dpi=200)
     plt.close()
 
+    return prname, cvDat.con.iloc[-1], cvDat.asy.iloc[-1], cvDat.atc.iloc[-1], rateAtc
+
+def dailyInfo(dtInfo):
+
+
+    dtInfo = np.array(dtInfo)
+    #print(dtInfo)
+    rateAtc = [float(x) for x in dtInfo[:, 4]]
+
+    fig, axs = plt.subplots(1, 1, constrained_layout=True)
+
+    axs.plot(dtInfo[:, 0], rateAtc, 'or', alpha=0.75, label='总比率（自7月19日）')
+
+    #axs.set_xticklabels(axs.get_xticklabels(), rotation=30, va='top', ha='center')
+    axs.tick_params(axis='x', which='major', labelrotation=75, labelright=True)
+    axs.set_xlabel('')
+    axs.set_ylabel('无症状转确诊率（%）')
+    axs.legend(loc='best')
+
+    plt.grid(axis='y', which='major', linestyle='--')
+    #plt.show()
+    plt.savefig("nhcRes2022/covid19_atcRate2022.png", dpi=200)
+
 def main():
 
     #lzfile = "lanzhou_covid-19_202207.xlsx"
@@ -113,10 +136,15 @@ def main():
         plist.append(name)
 #    plist = ["hana", "sich"]
     
+    dtInfo = []
     for pname in plist:
         prvfile = "nhcDat2022/covid19_%s.csv"%(pname)
         print(prvfile)
-        prvDataStats(prvfile, pname)
+        prnm, con, asy, atc, rateAtc = prvDataStats(prvfile, pname)
+        dtInfo.append([prnm, con, asy, atc, rateAtc])
+
+    #print(dtInfo)
+    dailyInfo(dtInfo)
 
 if __name__ == '__main__':
 
