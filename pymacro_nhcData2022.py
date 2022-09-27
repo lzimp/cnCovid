@@ -109,7 +109,7 @@ def main():
         path = "nhcRaw2022/"
     if nhctype == "sc":
         path = "shcRaw2022/"
-    tdate = dt.date.today() + dt.timedelta(days=-2)
+    tdate = dt.date.today()# + dt.timedelta(days=-2)
     print(tdate)
 
     for url in getPageUrl(nhctype):
@@ -125,6 +125,7 @@ def main():
             if date != str(tdate):
                 print("The following information is not for today!")
                 break;
+                #continue
 
             html = fetchUrl(link)
             content = getContent(html)
