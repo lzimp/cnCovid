@@ -64,6 +64,7 @@ def skimDayData(fl="nhcRaw2022/7月19日.txt"):
     #print(rawAsym)
 
     asysplt = re.split("（", rawAsym)
+    #print(asysplt)
     ttlAsym = int(re.sub(u"([^\u0030-\u0039])", "", re.split("，", asysplt[1])[-1]))
 
     #print(asysplt, ttlAsym)
@@ -232,13 +233,14 @@ def main():
 
     flList = os.listdir('nhcRaw2022/')
     flList.sort(key=lambda x:str(x.split('.')[0]))
-    ##print(flList)
+    #print(flList)
     #for fn in flList:
     #    fl = "nhcRaw2022/" + fn
     #    print(fl)
     #    dayDataSave(fl)
 
     fl = "nhcRaw2022/" + flList[-1]
+    #print(fl)
     dayDataSave(fl)
 
     #sfl = "shcRaw2022/08月19日.txt"
