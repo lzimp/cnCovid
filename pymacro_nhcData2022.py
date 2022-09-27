@@ -109,7 +109,7 @@ def main():
         path = "nhcRaw2022/"
     if nhctype == "sc":
         path = "shcRaw2022/"
-    tdate = dt.date.today() #+ dt.timedelta(days=-1)
+    tdate = dt.date.today() + dt.timedelta(days=-1)
     print(tdate)
 
     for url in getPageUrl(nhctype):
