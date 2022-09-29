@@ -1,4 +1,4 @@
-北京   biji  Beijing     
+北京   beji  Beijing     
 天津   tiji  Tianjin     
 河北   hebe  Hebei       
 山西   shxi  Shanxi      
