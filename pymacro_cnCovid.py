@@ -15,7 +15,9 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 #==============================================================
+#plt.rcParams["font.sans-serif"]=["fangsong_GB2312"] #设置字体
 plt.rcParams["font.sans-serif"]=["FangSong"] #设置字体
+#plt.rcParams["font.sans-serif"]=["SimHei"] #设置字体
 plt.rcParams["axes.unicode_minus"]=False #该语句解决图像中的“-”负号的乱码问题
 
 class covidData(object):
