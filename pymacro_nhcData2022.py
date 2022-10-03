@@ -118,14 +118,14 @@ def main():
         for title, link, date in getTitleUrl(s, nhctype):
             print(title, link, date)
            
-            #mon = int(date.split("-")[1])
-            #day = int(date.split("-")[2])
-            #if mon <= 6 and day < 1:
-            #    break;
-            if date != str(tdate):
-                print("The following information is not for today!")
+            mon = int(date.split("-")[1])
+            day = int(date.split("-")[2])
+            if mon <= 9 and day < 28:
                 break;
-                #continue
+            #if date != str(tdate):
+            #    print("The following information is not for today!")
+            #    break;
+            #    #continue
 
             html = fetchUrl(link)
             content = getContent(html)
