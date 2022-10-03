@@ -29,4 +29,5 @@
 青海   qiha  Qinghai     
 宁夏   nixi  Ningxia     
 新疆   xiji  Xinjiang   
-兵团   bitu  Bingtuan 
+兵团   bitu  Bingtuan
+绵阳   miya  Mianyang 

@@ -12,10 +12,12 @@ import pickle as pckl
 import numpy as np
 import pandas as pd
 import matplotlib as mpl
+import matplotlib.ticker as mticker
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 #==============================================================
 plt.rcParams["font.sans-serif"]=["FangSong"] #设置字体
+#zhfont = mpl.font_manager.FontProperties(fname='/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc', size=10)
 plt.rcParams["axes.unicode_minus"]=False #该语句解决图像中的“-”负号的乱码问题
 
 class covidData(object):
@@ -72,6 +74,8 @@ def prvDataStats(prvfile, pname):
     axs.bar(tsdate, atcCase, color='orange', alpha=0.35, label='%s 无症状转确诊'%(prname))
 
     #axs.tick_params(axis='x', labelrotation=45, labelright=True)
+    locTicker = axs.get_xticks().tolist()
+    axs.xaxis.set_major_locator(mticker.FixedLocator(locTicker))
     axs.set_xticklabels(axs.get_xticklabels(), rotation=30, va='top', ha='center') # center or right
     axs.set_xlabel("Date", fontsize=16, ha='right', x=1.0)
     axs.set_ylabel("Number of Daily Cases", fontsize=16, ha='right', y=1.0)
@@ -141,6 +145,7 @@ def main():
     #lzDataStats(lzfile)
     #cdfile = "chengdu_covid19.xlsx"
     #cdDataStats(cdfile)
+    #flList = os.listdir('nhcDat2022/covid19_miya.csv')
     flList = os.listdir('nhcDat2022/')
     plist = []
     for fl in flList:
@@ -153,6 +158,8 @@ def main():
         prvfile = "nhcDat2022/covid19_%s.csv"%(pname)
         print(prvfile)
         prnm, con, asy, atc, rateAtc, totCase = prvDataStats(prvfile, pname)
+        if pname == "miya":
+            continue
         dtInfo.append([prnm, con, asy, atc, rateAtc, totCase])
 
     #print(dtInfo)
