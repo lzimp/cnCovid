@@ -234,14 +234,14 @@ def main():
     flList = os.listdir('nhcRaw2022/')
     flList.sort(key=lambda x:str(x.split('.')[0]))
     print(flList)
-    for fn in flList:
-        fl = "nhcRaw2022/" + fn
-        print(fl)
-        dayDataSave(fl)
+    #for fn in flList:
+    #    fl = "nhcRaw2022/" + fn
+    #    print(fl)
+    #    dayDataSave(fl)
 
-    #fl = "nhcRaw2022/" + flList[-1]
-    #print(fl)
-    #dayDataSave(fl)
+    fl = "nhcRaw2022/" + flList[-1]
+    print(fl)
+    dayDataSave(fl)
 
     #sfl = "shcRaw2022/08月19日.txt"
     #skimSchData(sfl)
