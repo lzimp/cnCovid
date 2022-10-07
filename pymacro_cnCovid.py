@@ -61,10 +61,23 @@ def prvDataStats(prvfile, pname):
     #print(cvDat)
     conCase, asyCase = cvDat['con'], cvDat['asy']
     atcCase = [-x for x in cvDat['atc']]
-    totAtc, totAsy = -sum(atcCase), sum(asyCase)
+    totAtc, totAsy = sum(cvDat['atc']), sum(cvDat['asy'])
     rateAtc = 100.*totAtc / totAsy
+    totCon = sum(cvDat['con'])
+    totPos = sum(cvDat['pos'])
+    fstCon = totCon - totAtc
+    fnlAsy = totAsy - totAtc
 
-    fig, axs = plt.subplots(1, 1, constrained_layout=True)
+
+    #print("-------------------")
+    #print("%d, %d, %d, %d"%(totPos, fstCon, totAtc, fnlAsy))
+
+    #fig, axs = plt.subplots(1, 1, constrained_layout=True)
+    fig = plt.figure()
+    fig.set_figheight(6)
+    fig.set_figwidth(9)
+    axs = plt.subplot2grid(shape=(2,3), loc=(0,0), colspan=2, rowspan=2)
+    ax3 = plt.subplot2grid(shape=(2,3), loc=(0,2), colspan=1, rowspan=1)
     tday = str(dt.date.today())
     axs.text(0.75, 0.95, 'by @lzimp (%s)'%(tday), transform=axs.transAxes, fontsize=8, color='gray', alpha=0.25, ha='center', va='center', rotation='0')
 
@@ -100,6 +113,8 @@ def prvDataStats(prvfile, pname):
     axs.set_xlim(xmin, xmax)
 
     axs.legend(lns1+lns2, lbs1+lbs2, loc='best', facecolor='whitesmoke', edgecolor='black', fontsize=10)
+
+    ax3.pie([fstCon, totAtc, fnlAsy], labels=['直接确诊', '转确诊数', '无症状者'], explode=(0.1, 0.1, 0.1), autopct='%.2f%%')
 
     #plt.show()
     plt.savefig("nhcRes2022/%s_pstvStats2207.png"%(pname), dpi=200)
@@ -147,7 +162,7 @@ def main():
     #lzDataStats(lzfile)
     #cdfile = "chengdu_covid19.xlsx"
     #cdDataStats(cdfile)
-    #flList = os.listdir('nhcDat2022/covid19_miya.csv')
+    #flList = ['covid19_miya.csv']
     flList = os.listdir('nhcDat2022/')
     plist = []
     for fl in flList:
@@ -165,7 +180,7 @@ def main():
         dtInfo.append([prnm, con, asy, atc, rateAtc, totCase])
 
     #print(dtInfo)
-    dailyInfo(dtInfo)
+    #dailyInfo(dtInfo)
 
 if __name__ == '__main__':
 
