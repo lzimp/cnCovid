@@ -72,14 +72,16 @@ def prvDataStats(prvfile, pname):
     #print("-------------------")
     #print("%d, %d, %d, %d"%(totPos, fstCon, totAtc, fnlAsy))
 
-    #fig, axs = plt.subplots(1, 1, constrained_layout=True)
-    
-    fig = plt.figure(constrained_layout=True)
-    fig.set_constrained_layout_pads(w_pad=0, h_pad=0)
+    #fig, axs = plt.subplots(2, 3, constrained_layout=True) 
+    fig = plt.figure()
     fig.set_figheight(6)
     fig.set_figwidth(9)
-    axs = plt.subplot2grid(shape=(2,3), loc=(0,0), colspan=2, rowspan=2)
-    ax3 = plt.subplot2grid(shape=(2,3), loc=(0,2), colspan=1, rowspan=1)
+    gd1 = plt.subplot2grid(shape=(2,3), loc=(0,0), colspan=2, rowspan=2)
+    axs = fig.add_subplot(gd1, layout="contrained")
+    gd3 = plt.subplot2grid(shape=(2,3), loc=(0,2), colspan=1, rowspan=1)
+    ax3 = fig.add_subplot(gd3, layout="contrained")
+    fig.set_constrained_layout(False)
+
     tday = str(dt.date.today())
     axs.text(0.75, 0.95, 'by @lzimp (%s)'%(tday), transform=axs.transAxes, fontsize=8, color='gray', alpha=0.25, ha='center', va='center', rotation='0')
 
@@ -119,6 +121,7 @@ def prvDataStats(prvfile, pname):
     ax3.pie([fstCon, totAtc, fnlAsy], labels=['直接确诊', '转确诊数', '无症状者'], explode=(0.1, 0.1, 0.1), autopct='%.2f%%')
 
     #plt.show()
+    plt.tight_layout()
     plt.savefig("nhcRes2022/%s_pstvStats2207.png"%(pname), dpi=200)
     plt.close()
 
