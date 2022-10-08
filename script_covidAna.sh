@@ -6,6 +6,6 @@ python3 pymacro_skimDailyInfo.py
 python3 pymacro_cnCovid.py
 
 
-#git add .
-#git commit -a -m "updated"
-#git push
+git add .
+git commit -a -m "updated"
+git push

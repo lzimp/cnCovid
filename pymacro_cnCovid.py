@@ -73,6 +73,8 @@ def prvDataStats(prvfile, pname):
     #print("%d, %d, %d, %d"%(totPos, fstCon, totAtc, fnlAsy))
 
     #fig, axs = plt.subplots(1, 1, constrained_layout=True)
+    plt.rcParams['figure.constrained_layout.use'] = True
+    
     fig = plt.figure()
     fig.set_figheight(6)
     fig.set_figwidth(9)
