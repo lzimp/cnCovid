@@ -75,6 +75,7 @@ def prvDataStats(prvfile, pname):
     #fig, axs = plt.subplots(1, 1, constrained_layout=True)
     
     fig = plt.figure(constrained_layout=True)
+    fig.set_constrained_layout_pads(w_pad=0, h_pad=0)
     fig.set_figheight(6)
     fig.set_figwidth(9)
     axs = plt.subplot2grid(shape=(2,3), loc=(0,0), colspan=2, rowspan=2)
