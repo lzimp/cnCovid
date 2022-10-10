@@ -41,6 +41,7 @@ def getPageUrl(nhctype):
                 yield 'http://www.nhc.gov.cn/yjb/s7860/new_list.shtml'
             else:
                 url = 'http://www.nhc.gov.cn/yjb/s7860/new_list_' + str(page) + '.shtml'
+                print(url)
                 yield url
 
     if nhctype == "sc":
@@ -120,8 +121,8 @@ def main():
            
             #mon = int(date.split("-")[1])
             #day = int(date.split("-")[2])
-            #if mon <= 9 and day < 28:
-            #    break;
+            #if mon != 7 and (day >= 19 or day <=4):
+            #    continue;
             if date != str(tdate):
                 print("The following information is not for today!")
                 break;

@@ -50,13 +50,14 @@ def skimDayData(fl="nhcRaw2022/7月19日.txt"):
     #print(prvName, prvCase)
 
     # 2: 全国无症状转确诊病例数，3: 分省信息
-    ttlAtcf = int(re.sub(u"([^\u0030-\u0039])", "", prvList[2]))
     atcName, atcCase = [], []
-    atcsplt = re.split('，', prvList[3])
-    for prv in atcsplt:
-        atcnm = re.sub(u"([^\u4e00-\u9fa5])", "", prv)
-        atcName.append(atcnm[0:-1])
-        atcCase.append(int(re.sub(u"([^\u0030-\u0039])", "", prv)))
+    if len(prvList) > 2:
+        ttlAtcf = int(re.sub(u"([^\u0030-\u0039])", "", prvList[2]))
+        atcsplt = re.split('，', prvList[3])
+        for prv in atcsplt:
+            atcnm = re.sub(u"([^\u4e00-\u9fa5])", "", prv)
+            atcName.append(atcnm[0:-1])
+            atcCase.append(int(re.sub(u"([^\u0030-\u0039])", "", prv)))
 
     #print(atcName, atcCase)
 
@@ -233,8 +234,12 @@ def main():
 
     flList = os.listdir('nhcRaw2022/')
     flList.sort(key=lambda x:str(x.split('.')[0]))
-    print(flList)
+    ##print(flList)
     #for fn in flList:
+    #    days = fn[0:2] + fn[3:5]
+    #    if int(days) <= 831:
+    #        #print(int(days))
+    #        continue
     #    fl = "nhcRaw2022/" + fn
     #    print(fl)
     #    dayDataSave(fl)

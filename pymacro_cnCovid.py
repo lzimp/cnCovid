@@ -111,7 +111,10 @@ def prvDataStats(prvfile, pname):
     plt.grid(axis='y', which='major', linestyle='--')
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m-%d'))
     plt.gca().xaxis.set_major_locator(mdates.DayLocator())
-    plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=5))
+    if pname == "miya":
+        plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=5))
+    else:
+        plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=20))
     xmin, xmax = axs.get_xlim()
     axs.plot([xmin, xmax], [0, 0], 'black')
     axs.set_xlim(xmin, xmax)
@@ -139,12 +142,12 @@ def dailyInfo(dtInfo):
 
     fig, axs = plt.subplots(1, 1, constrained_layout=True)
 
-    axs.plot(dtInfo[:, 0], rateAtc, 'or', alpha=0.75, label='无症状转确诊（自7月19日）')
+    axs.plot(dtInfo[:, 0], rateAtc, 'or', alpha=0.75, label='无症状转确诊（自4月12日）')
     axs.text(0.80, 0.75, 'by @lzimp (%s)'%(tday), transform=axs.transAxes, fontsize=8, color='gray', alpha=0.25, ha='center', va='center', rotation='0')
 
     ax2 = axs.twinx()
     ax2.set_ylabel("累计总数", color='c', fontsize=16, horizontalalignment='right', y=1.0)
-    ax2.bar(dtInfo[:, 0], totCase, alpha=0.75, label='阳性总数（自7月19日）')
+    ax2.bar(dtInfo[:, 0], totCase, alpha=0.75, label='阳性总数（自4月12日）')
 
     #axs.set_xticklabels(axs.get_xticklabels(), rotation=30, va='top', ha='center')
     axs.tick_params(axis='x', which='major', labelrotation=75, labelright=True)
