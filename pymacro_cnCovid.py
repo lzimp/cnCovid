@@ -188,7 +188,7 @@ def main():
         dtInfo.append([prnm, con, asy, atc, rateAtc, totCase])
 
     #print(dtInfo)
-    #dailyInfo(dtInfo)
+    dailyInfo(dtInfo)
 
 if __name__ == '__main__':
 
