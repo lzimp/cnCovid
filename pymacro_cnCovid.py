@@ -148,6 +148,7 @@ def dailyInfo(dtInfo):
     ax2 = axs.twinx()
     ax2.set_ylabel("累计总数", color='c', fontsize=16, horizontalalignment='right', y=1.0)
     ax2.bar(dtInfo[:, 0], totCase, alpha=0.75, label='阳性总数（自4月12日）')
+    ax2.set_yscale('log')
 
     #axs.set_xticklabels(axs.get_xticklabels(), rotation=30, va='top', ha='center')
     axs.tick_params(axis='x', which='major', labelrotation=75, labelright=True)
