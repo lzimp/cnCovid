@@ -184,7 +184,7 @@ def main():
         prvfile = "nhcDat2022/covid19_%s.csv"%(pname)
         print(prvfile)
         prnm, con, asy, atc, rateAtc, totCase = prvDataStats(prvfile, pname)
-        if pname == "miya":
+        if pname in ["miya", "lazh"]:
             continue
         dtInfo.append([prnm, con, asy, atc, rateAtc, totCase])
 

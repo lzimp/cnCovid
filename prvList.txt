@@ -31,3 +31,4 @@
 新疆   xiji  Xinjiang   
 兵团   bitu  Bingtuan
 绵阳   miya  Mianyang 
+兰州   lazh  Lanzhou 
