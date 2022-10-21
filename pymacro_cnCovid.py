@@ -182,6 +182,8 @@ def main():
     dtInfo = []
     for pname in plist:
         prvfile = "nhcDat2022/covid19_%s.csv"%(pname)
+        if pname == "bitu":
+            continue
         print(prvfile)
         prnm, con, asy, atc, rateAtc, totCase = prvDataStats(prvfile, pname)
         if pname in ["miya", "lazh"]:
