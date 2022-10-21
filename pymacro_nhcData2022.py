@@ -121,7 +121,7 @@ def main():
            
             #mon = int(date.split("-")[1])
             #day = int(date.split("-")[2])
-            #if mon != 7 and (day >= 19 or day <=4):
+            #if mon != 10 and day != 19:
             #    continue;
             if date != str(tdate):
                 print("The following information is not for today!")
