@@ -172,11 +172,18 @@ def main():
     #cdfile = "chengdu_covid19.xlsx"
     #cdDataStats(cdfile)
     #flList = ['covid19_miya.csv']
-    flList = os.listdir('nhcDat2022/')
+    flag = sys.argv[1]
+    if flag == "all":
+        flList = os.listdir('nhcDat2022/')
+    elif flag == "lazh":
+        flList = ['covid19_lazh.csv']
+
     plist = []
     for fl in flList:
         name = fl[8:12]
         plist.append(name)
+
+
 #    plist = ["hana", "sich"]
     
     dtInfo = []
@@ -191,7 +198,8 @@ def main():
         dtInfo.append([prnm, con, asy, atc, rateAtc, totCase])
 
     #print(dtInfo)
-    dailyInfo(dtInfo)
+    if flag == "all":
+        dailyInfo(dtInfo)
 
 if __name__ == '__main__':
 
