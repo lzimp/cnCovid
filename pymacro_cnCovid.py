@@ -175,8 +175,9 @@ def main():
     flag = sys.argv[1]
     if flag == "all":
         flList = os.listdir('nhcDat2022/')
-    elif flag == "lazh":
-        flList = ['covid19_lazh.csv']
+    else:
+        cfl = 'covid19_' + sys.argv[1] + '.csv'
+        flList = [cfl]
 
     plist = []
     for fl in flList:
