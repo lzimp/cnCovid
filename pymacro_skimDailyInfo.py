@@ -1,5 +1,10 @@
-
-
+# macro to save the covid19 data based on province
+#
+# file requrie: csv file for data analysis
+#
+# Author: D.X.~Lin (Lanzhou)
+# Date: Sep.05, 2022
+#==============================================================
 import os, requests, random, re
 import pandas as pd
 import urllib.request
@@ -8,6 +13,13 @@ import time
 from bs4 import BeautifulSoup
 from datetime import datetime as dt
 from csv import DictWriter
+import matplotlib as mpl
+import matplotlib.ticker as mticker
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+#==============================================================
+plt.rcParams["font.sans-serif"]=["FangSong"] #设置字体
+plt.rcParams["axes.unicode_minus"]=False #该语句解决图像中的“-”负号的乱码问题
 
 def skimDayData(fl="nhcRaw2022/7月19日.txt"):
 
@@ -176,6 +188,7 @@ def dayDataSave(fl = "nhcRaw2022/7月19日.txt"):
     #print(type(tday))
  
     ipos = 0
+    tdCases = []
     for prv in list(set(prvName + atcName + asyName)):
 
         if prv in prvName:
@@ -192,7 +205,7 @@ def dayDataSave(fl = "nhcRaw2022/7月19日.txt"):
             prvatc = atcCase[atcName.index(prv)]
         else:
             prvatc = 0
-        #print(prv, prvpos, prvasy, prvatp)
+        tdCases.append([prv, prvpos, prvasy, prvatc, prvpos+prvasy-prvatc])
 
         prvidx = prvIndx.get_loc(prv)
         flhead = prvInfo[1][prvidx]
@@ -229,6 +242,37 @@ def dayDataSave(fl = "nhcRaw2022/7月19日.txt"):
             #prvData.to_pickle(svFile)
             prvData.to_csv(svFile, index=False)
 
+    tdCases = pd.DataFrame(tdCases, columns=['prvn', 'pos', 'asy', 'atc', 'tot'])
+    tdCases = tdCases.sort_values(by=['tot'], ascending=False)
+    #print(tdCases)
+
+    fig, axs = plt.subplots(1, 1, constrained_layout=True)
+    axs.text(0.5, 0.95, 'by @lzimp (%s)'%(tday), transform=axs.transAxes, fontsize=8, color='gray', alpha=0.25, ha='center', va='center', rotation='0')
+    axs.tick_params(axis='x', which='major', labelrotation=75, labelright=True)
+    axs.set_xlabel('')
+    axs.set_ylabel(r"当日(%s)病例数"%(tday), fontsize=16, horizontalalignment='right', y=1.0)
+    #axs.plot([tdCases['prvn'][0], tdCases['prvn'][-1]], [0, 0])
+    axs.bar(tdCases['prvn'], tdCases['tot'], alpha=0.75, label='总阳性数')
+    axs.bar(tdCases['prvn'], tdCases['pos'], color='m', alpha=0.35, label='确诊数')
+    axs.bar(tdCases['prvn'], tdCases['asy'], color='g', alpha=0.35, label='无症状数')
+    tdAtc = []
+    for csAtc in tdCases['atc']:
+        tdAtc.append(-csAtc)
+    axs.bar(tdCases['prvn'], tdAtc, color='orange', alpha=0.35, label='无症状转确诊')
+    axs.text(0.75, 0.5, '%d省市区'%(len(tdCases['prvn'])), transform=axs.transAxes, fontsize=12, color='black', alpha=0.95, ha='center', va='center', rotation='0')
+    axs.text(0.75, 0.45, '总阳性数%5d'%(tdCases['tot'].sum()), transform=axs.transAxes, fontsize=12, color='black', alpha=0.95, ha='center', va='center', rotation='0')
+    axs.text(0.75, 0.40, '总确诊数%5d'%(tdCases['pos'].sum()), transform=axs.transAxes, fontsize=12, color='black', alpha=0.95, ha='center', va='center', rotation='0')
+    axs.text(0.75, 0.35, '无症状数%5d'%(tdCases['asy'].sum()), transform=axs.transAxes, fontsize=12, color='black', alpha=0.95, ha='center', va='center', rotation='0')
+
+
+    axs.legend(loc='best')
+    plt.minorticks_off()
+    axs.yaxis.set_minor_locator(mticker.AutoMinorLocator())
+    plt.grid(axis='y', which='major', linestyle='--')
+
+    #plt.show()
+    tdate = str(tday)
+    plt.savefig("nhcRes2022/covid19_tdCases%s%s.png"%(tdate[5:6], tdate[8:9]), dpi=200)
 
 def main():
 
