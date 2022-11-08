@@ -272,7 +272,7 @@ def dayDataSave(fl = "nhcRaw2022/7月19日.txt"):
 
     #plt.show()
     tdate = str(tday)
-    plt.savefig("nhcRes2022/covid19_tdCases%s%s.png"%(tdate[5:6], tdate[8:9]), dpi=200)
+    plt.savefig("nhcRes2022/covid19_tdCases%s%s.png"%(tdate[5:7], tdate[8:10]), dpi=200)
 
 def main():
 
