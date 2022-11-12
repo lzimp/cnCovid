@@ -85,7 +85,7 @@ def prvDataStats(prvfile, pname):
     tday = str(dt.date.today())
     axs.text(0.75, 0.95, 'by @lzimp (%s)'%(tday), transform=axs.transAxes, fontsize=8, color='gray', alpha=0.25, ha='center', va='center', rotation='0')
 
-    axs.text(0.45, 0.95, '%.2f%%'%(rateAtc), transform=axs.transAxes, fontsize=12, color='red', alpha=0.75, ha='center', va='center', rotation='0')
+    #axs.text(0.45, 0.95, '%.2f%%'%(rateAtc), transform=axs.transAxes, fontsize=12, color='red', alpha=0.75, ha='center', va='center', rotation='0')
     axs.bar(tsdate, prvpstv, alpha=0.75, label='%s 日增阳性'%(prname))
     axs.plot(tsdate, prvravg, '-or', ms=3, label='%s 七日平均'%(prname))
     axs.bar(tsdate, conCase, color='m', alpha=0.35, label='%s 日增确诊'%(prname))
@@ -98,6 +98,11 @@ def prvDataStats(prvfile, pname):
     axs.set_xticklabels(axs.get_xticklabels(), rotation=30, va='top', ha='center') # center or right
     axs.set_xlabel("Date", fontsize=16, ha='right', x=1.0)
     axs.set_ylabel("Number of Daily Cases", fontsize=16, ha='right', y=1.0)
+
+    if pname == "lazh":
+        qindx = cvDat.index[cvDat['date'] == '2022-10-23'].tolist()
+        axs.vlines(x=tsdate[qindx[0]], ymin=0, ymax=120, color='r')
+        axs.text(tsdate[qindx[0]], 125, "居家", color='red', size=12)
 
     ax2 = axs.twinx()
     ax2.set_ylabel("Number of Total Cases", color='c', fontsize=16, horizontalalignment='right', y=1.0)
