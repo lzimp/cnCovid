@@ -101,9 +101,15 @@ def prvDataStats(prvfile, pname):
 
     if pname == "lazh":
         qindx = cvDat.index[cvDat['date'] == '2022-10-23'].tolist()
-        axs.vlines(x=tsdate[qindx[0]], ymin=0, ymax=120, color='r')
-        axs.text(tsdate[qindx[0]], 125, "居家", color='red', size=12)
+        miny, maxy = axs.get_ylim();
+        axs.vlines(x=tsdate[qindx[0]], ymin=miny, ymax=150, color='orchid')
+        axs.text(tsdate[qindx[0]], 155, "居家", color='orchid', size=12)
 
+        rindx = cvDat.index[cvDat['date'] == '2022-11-13'].tolist()
+        axs.vlines(x=tsdate[rindx[0]], ymin=miny, ymax=0, color='orchid')
+        axs.text(tsdate[qindx[0]+5], -40, "部分解封", color='orchid', size=12)
+
+    axs.set_ylim(miny, maxy)
     ax2 = axs.twinx()
     ax2.set_ylabel("Number of Total Cases", color='c', fontsize=16, horizontalalignment='right', y=1.0)
     ax2.plot(tsdate, prvrTot, '--c', label='%s 总阳性数'%(prname))
