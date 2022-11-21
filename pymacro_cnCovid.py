@@ -110,6 +110,11 @@ def prvDataStats(prvfile, pname):
         axs.text(tsdate[qindx[0]+5], -40, "部分解封", color='orchid', size=12)
 
     axs.set_ylim(miny, maxy)
+    sindx = cvDat.index[cvDat['date'] == '2022-10-01'].tolist()
+    lstdt = len(tsdate)
+    #print(tsdate[lstdt-1], type(tsdate[lstdt-1]))
+    if pname not in ["lazh", "miya"]:
+        axs.set_xlim(tsdate[sindx[0]], tsdate[lstdt-1]+pd.Timedelta(days=2))
     ax2 = axs.twinx()
     ax2.set_ylabel("Number of Total Cases", color='c', fontsize=16, horizontalalignment='right', y=1.0)
     ax2.plot(tsdate, prvrTot, '--c', label='%s 总阳性数'%(prname))
