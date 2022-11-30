@@ -123,7 +123,8 @@ def main():
            
             #mon = int(date.split("-")[1])
             #day = int(date.split("-")[2])
-            #if mon <= 11 and day <= 7:
+            #if mon <= 11 and day <= 26:
+            #    break;
             #    continue;
             if date != str(tdate):
                 print("The following information is not for today!")

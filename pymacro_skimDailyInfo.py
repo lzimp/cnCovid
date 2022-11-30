@@ -288,7 +288,7 @@ def main():
     #    print(fl)
     #    dayDataSave(fl)
 
-    fl = "nhcRaw2022/" + flList[-1]
+    fl = "nhcRaw2022/" + flList[-3]
     print(fl)
     dayDataSave(fl)
 
