@@ -63,6 +63,11 @@ def prvDataStats(prvfile, pname):
     atcCase = [-x for x in cvDat['atc']]
     totAtc, totAsy = sum(cvDat['atc']), sum(cvDat['asy'])
     rateAtc = 100.*totAtc / totAsy
+    if totAtc == 0:
+        dratAtc = 0
+    else:
+        dratAtc = rateAtc*np.sqrt(1/totAtc + 1/totAsy)
+    #print(rateAtc, dratAtc)
     totCon = sum(cvDat['con'])
     totPos = sum(cvDat['pos'])
     fstCon = totCon - totAtc
@@ -106,8 +111,13 @@ def prvDataStats(prvfile, pname):
         axs.text(tsdate[qindx[0]], 155, "居家", color='orchid', size=12)
 
         rindx = cvDat.index[cvDat['date'] == '2022-11-13'].tolist()
-        axs.vlines(x=tsdate[rindx[0]], ymin=miny, ymax=0, color='orchid')
-        axs.text(tsdate[qindx[0]+5], -40, "部分解封", color='orchid', size=12)
+        axs.vlines(x=tsdate[rindx[0]], ymin=miny, ymax=0, linestyles="dashed", color='orchid')
+        #axs.text(tsdate[qindx[0]+2], -90, "部分解封", color='orchid', size=12)
+        axs.vlines(x=tsdate[rindx[0]+7], ymin=miny, ymax=0, linestyles="dashdot", color='orchid')
+
+        rrndx = cvDat.index[cvDat['date'] == '2022-12-05'].tolist()
+        axs.vlines(x=tsdate[rrndx[0]], ymin=miny, ymax=0, color='orchid')
+        axs.text(tsdate[qindx[0]+30], -90, "解封", color='orchid', size=12)
 
     axs.set_ylim(miny, maxy)
     sindx = cvDat.index[cvDat['date'] == '2022-10-01'].tolist()
@@ -144,7 +154,7 @@ def prvDataStats(prvfile, pname):
     plt.savefig("nhcRes2022/%s_pstvStats2207.png"%(pname), dpi=200)
     plt.close()
 
-    return prname, cvDat.con.iloc[-1], cvDat.asy.iloc[-1], cvDat.atc.iloc[-1], rateAtc, prvrTot.iloc[-1]
+    return prname, cvDat.con.iloc[-1], cvDat.asy.iloc[-1], cvDat.atc.iloc[-1], rateAtc, dratAtc, prvrTot.iloc[-1]
 
 def dailyInfo(dtInfo):
 
@@ -152,13 +162,15 @@ def dailyInfo(dtInfo):
     dtInfo = np.array(dtInfo)
     #print(dtInfo)
     rateAtc = [float(x) for x in dtInfo[:, 4]]
-    totCase = [float(x) for x in dtInfo[:, 5]]
+    dratAtc = [float(x) for x in dtInfo[:, 5]]
+    totCase = [float(x) for x in dtInfo[:, 6]]
     tday = str(dt.date.today())
     #print(tday)
 
     fig, axs = plt.subplots(1, 1, constrained_layout=True)
 
-    axs.plot(dtInfo[:, 0], rateAtc, 'or', alpha=0.75, label='无症状转确诊（自4月12日）')
+    #axs.plot(dtInfo[:, 0], rateAtc, 'or', alpha=0.75, label='无症状转确诊（自4月12日）')
+    axs.errorbar(dtInfo[:, 0], rateAtc, yerr=dratAtc, fmt="o", color="r", capsize=4, alpha=0.75, label='无症状转确诊（自4月12日）')
     axs.text(0.80, 0.75, 'by @lzimp (%s)'%(tday), transform=axs.transAxes, fontsize=8, color='gray', alpha=0.25, ha='center', va='center', rotation='0')
 
     ax2 = axs.twinx()
@@ -209,10 +221,10 @@ def main():
         if pname == "bitu":
             continue
         print(prvfile)
-        prnm, con, asy, atc, rateAtc, totCase = prvDataStats(prvfile, pname)
+        prnm, con, asy, atc, rateAtc, dratAtc, totCase = prvDataStats(prvfile, pname)
         if pname in ["miya", "lazh"]:
             continue
-        dtInfo.append([prnm, con, asy, atc, rateAtc, totCase])
+        dtInfo.append([prnm, con, asy, atc, rateAtc, dratAtc, totCase])
 
     #print(dtInfo)
     if flag == "all":
